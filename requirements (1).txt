@@ -1,9 +1,0 @@
-streamlit
-yfinance
-pandas
-numpy
-scikit-learn
-vaderSentiment
-joblib
-plotly
-transformers
