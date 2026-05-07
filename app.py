@@ -131,32 +131,29 @@ if st.sidebar.button("🔮 Predict Volatility", use_container_width=True):
     col2.metric("😠 Negative", f"{scores['neg']:.1%}")
     col3.metric("😐 Neutral", f"{scores['neu']:.1%}")
 
-# 🔥 NEW FEATURE 2: FIXED MULTI-STOCK COMPARISON (No NA!)
+# 🔥 FAIL-SAFE PORTFOLIO SECTION
 st.subheader("🏆 Live Tech Portfolio Comparison")
 col1, col2, col3, col4 = st.columns(4)
 
-tech_stocks = {
-    "AAPL": "Apple",
-    "TSLA": "Tesla", 
-    "MSFT": "Microsoft",
-    "NVDA": "NVIDIA"
-}
+tickers = ["AAPL", "TSLA", "MSFT", "NVDA"]
 
-for i, (tick, name) in enumerate(tech_stocks.items()):
+for i, tick in enumerate(tickers):
     with eval(f"col{i+1}"):
         try:
-            # Robust data fetch
-            data = yf.download(tick, period="3mo", progress=False, 
-                             prepost=True, threads=False)
-            if len(data) > 15:
-                returns = data['Close'].pct_change().dropna()
-                volatility = returns.std() * np.sqrt(252) * 100
-                st.metric(f"{tick}\n{name}", f"{volatility:.1f}%", 
-                         delta_color="inverse")
-            else:
-                st.metric(tick, "⏳ Loading", delta="")
+            # Added a very short period to make it faster
+            data = yf.download(tick, period="1mo", progress=False)
+            
+            # Extract closing prices safely
+            if isinstance(data.columns, pd.MultiIndex):
+                # Flatten MultiIndex safely
+                data = data['Close']
+            
+            close_prices = data.iloc[:, 0] if isinstance(data, pd.DataFrame) else data
+            
+            vol = close_prices.pct_change().std() * np.sqrt(252) * 100
+            st.metric(tick, f"{vol:.1f}%")
         except:
-            st.metric(tick, "🔄 Retry", delta="")
+            st.metric(tick, "N/A")
 
 st.caption("⚡ Real-time volatility comparison | Green=low risk, Red=high risk")
 # Footer
