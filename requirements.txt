@@ -6,4 +6,4 @@ scikit-learn
 vaderSentiment
 joblib
 plotly
-transformers
+requests
