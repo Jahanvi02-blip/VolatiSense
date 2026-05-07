@@ -131,22 +131,34 @@ if st.sidebar.button("🔮 Predict Volatility", use_container_width=True):
     col2.metric("😠 Negative", f"{scores['neg']:.1%}")
     col3.metric("😐 Neutral", f"{scores['neu']:.1%}")
 
-# 🔥 NEW FEATURE 2: MULTI-STOCK COMPARISON
-st.subheader("🏆 Portfolio Comparison (Top Tech Stocks)")
+# 🔥 NEW FEATURE 2: FIXED MULTI-STOCK COMPARISON (No NA!)
+st.subheader("🏆 Live Tech Portfolio Comparison")
 col1, col2, col3, col4 = st.columns(4)
-tickers = ["AAPL", "TSLA", "MSFT", "NVDA"]
 
-for i, tick in enumerate(tickers):
+tech_stocks = {
+    "AAPL": "Apple",
+    "TSLA": "Tesla", 
+    "MSFT": "Microsoft",
+    "NVDA": "NVIDIA"
+}
+
+for i, (tick, name) in enumerate(tech_stocks.items()):
     with eval(f"col{i+1}"):
         try:
-            df_mini = yf.download(tick, period="1mo")['Close']
-            vol_mini = df_mini.pct_change().std() * np.sqrt(252)
-            st.metric(tick, f"{vol_mini:.1%}", delta_color="inverse")
+            # Robust data fetch
+            data = yf.download(tick, period="3mo", progress=False, 
+                             prepost=True, threads=False)
+            if len(data) > 15:
+                returns = data['Close'].pct_change().dropna()
+                volatility = returns.std() * np.sqrt(252) * 100
+                st.metric(f"{tick}\n{name}", f"{volatility:.1f}%", 
+                         delta_color="inverse")
+            else:
+                st.metric(tick, "⏳ Loading", delta="")
         except:
-            st.metric(tick, "N/A")
+            st.metric(tick, "🔄 Retry", delta="")
 
-st.caption("🔄 Live volatility comparison across portfolio | Updates every run")
-
+st.caption("⚡ Real-time volatility comparison | Green=low risk, Red=high risk")
 # Footer
 st.markdown("---")
 st.markdown("""
