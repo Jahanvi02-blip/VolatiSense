@@ -150,11 +150,11 @@ st.caption("🔄 Live volatility comparison across portfolio | Updates every run
 # Footer
 st.markdown("---")
 st.markdown("""
-**Features Added:**
+
 📰 **Live News Integration** (simulated - NewsAPI ready)
 📊 **Multi-Stock Portfolio Comparison**
 🔮 **30-Day Volatility Forecast**
 ⚠️ **Risk Scoring System**
 
-**Built by Jahanvi Singh | Advanced ML + Deployment**
+
 """)
