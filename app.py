@@ -193,7 +193,7 @@ for i, (tick, name) in enumerate(tech_stocks.items()):
 
 st.caption("⚡ Real-time volatility comparison | Green = low risk, Red = high risk")
 st.markdown("---")
-st.markdown("Built by Jahanvi Singh | Advanced ML + Sentiment + Technical Analysis")
+
 
 
 
